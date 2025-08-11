@@ -1,18 +1,64 @@
+import requests
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
+from crewai.tools import tool
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
+llm = LLM(
+    model="gemma3:1b",
+    temperature=0.5,
+    config={
+        "max_tokens": 256,
+        "top_k": 10,
+    }
+)
+
+@tool("Wikipedia Search Tool")
+def myWikipediaSearch(question: str) -> str:
+    """Searches Wikipedia for the given query and returns the first paragraph."""
+    
+    url="https://en.wikipedia.org/w/api.php"
+    params={
+        "action": "query",
+        "format": "json",
+        "list": "search",
+        "srsearch": question
+    }
+
+    response = requests.get(url, params=params)
+    results = response.json().get('query', {}).get('search', [])
+
+    if not results:
+        return "No results found."
+
+    title = results[0]['title']
+    
+    newParams={
+        "action": "query",
+        "format": "json",
+        "prop": "extracts",
+        "exintro": True,
+        "explaintext": True,
+        "titles": title
+    }
+
+    newResponse = requests.get(url, params=newParams)
+    page = next(iter(newResponse.json().get('query', {}).get('pages', {}).values()), {})
+    extract = page.get('extract', 'No extract found.')
+
+    return f"Title: {title}\nExtract: {extract}"
+
 @CrewBase
 class General():
-    """General crew"""
+    """General Crew"""
 
-    agents: List[BaseAgent]
-    tasks: List[Task]
-
+    agents = "config/agents.yaml"
+    tasks = "config/tasks.yaml"
+    
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
     # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
@@ -22,14 +68,15 @@ class General():
     @agent
     def researcher(self) -> Agent:
         return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
-            verbose=True
+            config=self.agents['researcher'], # type: ignore[index]
+            verbose=True,
+            tools=[myWikipediaSearch],
         )
 
     @agent
-    def reporting_analyst(self) -> Agent:
+    def summarizer(self) -> Agent:
         return Agent(
-            config=self.agents_config['reporting_analyst'], # type: ignore[index]
+            config=self.agents['summarizer'], # type: ignore[index]
             verbose=True
         )
 
@@ -37,21 +84,22 @@ class General():
     # task dependencies, and task callbacks, check out the documentation:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     @task
-    def research_task(self) -> Task:
+    def research(self) -> Task:
         return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
+            config=self.tasks['research'], # type: ignore[index]
         )
 
     @task
-    def reporting_task(self) -> Task:
+    def summarize(self) -> Task:
         return Task(
-            config=self.tasks_config['reporting_task'], # type: ignore[index]
-            output_file='report.md'
+            config=self.tasks['summarize'], # type: ignore[index]
+            context=[research],
+            # output_file='report.md'
         )
 
     @crew
     def crew(self) -> Crew:
-        """Creates the General crew"""
+        """Creates the General Crew"""
         # To learn how to add knowledge sources to your crew, check out the documentation:
         # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
 

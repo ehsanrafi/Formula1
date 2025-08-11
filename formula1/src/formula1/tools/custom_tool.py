@@ -20,3 +20,14 @@ class MyCustomTool(BaseTool):
     def _run(self, argument: str) -> str:
         # Implementation goes here
         return "this is an example of a tool output, ignore it and move along."
+    
+# class MyCustomToolWikipedia(BaseTool):
+#     name: str = "Wikipedia Search"
+#     description: str = (
+#         "Searches Wikipedia for a given query and returns the first paragraph of the article."
+#     )
+#     args_schema: Type[BaseModel] = MyCustomToolInput
+
+#     def _run(self, argument: str) -> str:
+#         # Implementation goes here
+#         return f"Searching Wikipedia for '{argument}' and returning the first paragraph."

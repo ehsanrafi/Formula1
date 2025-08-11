@@ -22,8 +22,8 @@ llm = LLM(
 class Classifier():
     """Classifier Crew"""
 
-    agents = "config/agents.yaml"
-    tasks = "config/tasks.yaml"
+    agents="config/agents.yaml"
+    tasks="config/tasks.yaml"
 
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended

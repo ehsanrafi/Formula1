@@ -37,7 +37,7 @@ class Others():
 
     @crew
     def crew(self) -> Crew:
-        """Creates the Others crew"""
+        """Creates the Others Crew"""
         # To learn how to add knowledge sources to your crew, check out the documentation:
         # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
 

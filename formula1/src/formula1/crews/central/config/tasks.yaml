@@ -1,0 +1,10 @@
+classifyInput:
+  description: >
+    Given the user message:
+      {user_message}
+    Classify the input text into one of the predefined categories.
+    The categories are: 'general', 'concrete', and 'others'.
+  expected_output: >
+    A JSON object with two fields:
+    - "classification": either "general", "concrete", or "others"
+  agent: classifier

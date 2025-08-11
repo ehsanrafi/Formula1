@@ -1,2 +1,2 @@
 # Formula1
-F1 chatbot made by using CrewAI technology.
+F1 Q&A Bot made by using CrewAI technology.

@@ -1,53 +1,64 @@
 #!/usr/bin/env python
-from random import randint
-
 from pydantic import BaseModel
 
 from crewai.flow import Flow, listen, start
 
-from formula1.crews.poem_crew.poem_crew import PoemCrew
+from formula1.crews.classifier.classifier import Classifier
+from formula1.crews.concrete.concrete import Concrete
+from formula1.crews.general.general import General
+from formula1.crews.others.others import Others
 
+class UserInput(BaseModel):
+    input: str = ""
 
-class PoemState(BaseModel):
-    sentence_count: int = 1
-    poem: str = ""
-
-
-class PoemFlow(Flow[PoemState]):
+class MainFlow(Flow[UserInput]):
 
     @start()
-    def generate_sentence_count(self):
-        print("Generating sentence count")
-        self.state.sentence_count = randint(1, 5)
+    def getUserInput(self):
+        print("What are you looking for?")
+        self.state.input = input("You:")
 
-    @listen(generate_sentence_count)
-    def generate_poem(self):
-        print("Generating poem")
-        result = (
-            PoemCrew()
-            .crew()
-            .kickoff(inputs={"sentence_count": self.state.sentence_count})
-        )
+    @listen(getUserInput)
+    def startFlow(self):
+        inputs={
+            "user_message": self.input,
+        }
 
-        print("Poem generated", result.raw)
-        self.state.poem = result.raw
+        response=""
 
-    @listen(generate_poem)
-    def save_poem(self):
-        print("Saving poem")
-        with open("poem.txt", "w") as f:
-            f.write(self.state.poem)
+        try:
+            raw=Classifier.crew().kickoff(inputs=inputs)
+            decision=raw['classification']
+        except Exception as e:
+            raise Exception(f"An error occurred while running the classifier crew: {e}")
 
+        if decision=='general':
+            try:
+                response=General.crew().kickoff(intputs=inputs)
+            except Exception as e:
+                raise Exception(f"An error occurred while running the general crew: {e}")
+        elif decision=='concrete':
+            try:
+                response=Concrete.crew().kickoff(intputs=inputs)
+            except Exception as e:
+                raise Exception(f"An error occurred while running the concrete crew: {e}")
+        elif decision=='others':
+            try:
+                response=Others.crew().kickoff(intputs=inputs)
+            except Exception as e:
+                raise Exception(f"An error occurred while running the others crew: {e}")
+        else:
+            print("Houston, we've had a problem.")
+
+        print response
 
 def kickoff():
-    poem_flow = PoemFlow()
-    poem_flow.kickoff()
-
+    flow = MainFlow(UserInput())
+    flow.kickoff()
 
 def plot():
-    poem_flow = PoemFlow()
-    poem_flow.plot()
-
+    flow = MainFlow(UserInput())
+    flow.plot()
 
 if __name__ == "__main__":
     kickoff()

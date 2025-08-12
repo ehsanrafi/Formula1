@@ -50,11 +50,9 @@ class Concrete():
             config=self.tasks['qa'], # type: ignore[index]
         )
 
-
-
     @crew
     def crew(self) -> Crew:
-        """Creates the Concrete crew"""
+        """Creates the Concrete Crew"""
         # To learn how to add knowledge sources to your crew, check out the documentation:
         # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
 

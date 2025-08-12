@@ -6,6 +6,15 @@ from typing import List
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
+llm = LLM(
+    model="gemma3:1b",
+    temperature=0.3,
+    config={
+        "max_tokens": 256,
+        "top_k": 10,
+    }
+)
+
 @CrewBase
 class Others():
     """Others Crew"""

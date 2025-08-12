@@ -10,7 +10,7 @@ from crewai.tools import tool
 
 llm = LLM(
     model="gemma3:1b",
-    temperature=0.5,
+    temperature=0.3,
     config={
         "max_tokens": 256,
         "top_k": 10,

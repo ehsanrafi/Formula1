@@ -50,7 +50,7 @@ class MainFlow(Flow[UserInput]):
         else:
             print("Houston, we've had a problem.")
 
-        print response
+        print(response)
 
 def kickoff():
     flow = MainFlow(UserInput())

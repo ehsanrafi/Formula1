@@ -1,4 +1,9 @@
-from crewai import Agent, Crew, Process, Task
+import warnings, re, csv
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=SyntaxWarning, message=r".*\\&.*")
+
+from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
@@ -16,9 +21,18 @@ llm = LLM(
     }
 )
 
-drivers=CSVSearchTool(csv='knowledge/drivers.csv')
-circuits=CSVSearchTool(csv='knowledge/circuits.csv')
-constructors=CSVSearchTool(csv='knowledge/constructors.csv')
+embedchain_config = {
+    "embedder": {
+        "provider": "ollama",
+        "config": {
+            "model": "nomic-embed-text",
+        }
+    }
+}
+
+drivers=CSVSearchTool(csv='knowledge/drivers.csv', config=embedchain_config)
+circuits=CSVSearchTool(csv='knowledge/circuits.csv', config=embedchain_config)
+constructors=CSVSearchTool(csv='knowledge/constructors.csv', config=embedchain_config)
 
 @CrewBase
 class Concrete():
@@ -61,5 +75,7 @@ class Concrete():
             tasks=self.tasks, # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
+            llm=llm,
+            embedder=embedder_config,
             # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
         )

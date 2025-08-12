@@ -12,10 +12,10 @@ from typing import List
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 llm = LLM(
-    model="gemma3:1b",
+    model="smollm2:135m",
     temperature=0.3,
     config={
-        "max_tokens": 256,
+        "max_tokens": 128,
         "top_k": 10,
     }
 )

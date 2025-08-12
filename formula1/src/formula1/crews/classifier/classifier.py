@@ -16,10 +16,10 @@ class CategoryClass(BaseModel):
     classification: str=Field(..., description="The category of the query")
 
 llm = LLM(
-    model="gemma3:1b",
+    model="smollm2:135m",
     temperature=0.3,
     config={
-        "max_tokens": 256,
+        "max_tokens": 128,
         "top_k": 10,
     }
 )

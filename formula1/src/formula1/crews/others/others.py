@@ -1,7 +1,6 @@
 import warnings, re
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=SyntaxWarning, message=r".*\\&.*")
+warnings.filterwarnings("ignore")
 
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
@@ -12,11 +11,12 @@ from typing import List
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 llm = LLM(
-    model="smollm2:135m",
+    model="ollama/smollm2:135m",
+    base_url="http://localhost:11434",
     temperature=0.3,
     config={
         "max_tokens": 128,
-        "top_k": 10,
+        "top_k": 5,
     }
 )
 
@@ -24,8 +24,8 @@ llm = LLM(
 class Others():
     """Others Crew"""
 
-    agents="config/agents.yaml"
-    tasks="config/tasks.yaml"
+    agents_config="config/agents.yaml"
+    tasks_config="config/tasks.yaml"
 
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
@@ -36,8 +36,9 @@ class Others():
     @agent
     def outOfScope(self) -> Agent:
         return Agent(
-            config=self.agents['outOfScope'], # type: ignore[index]
-            verbose=True
+            config=self.agents_config['outOfScope'], # type: ignore[index]
+            verbose=True,
+            llm=llm,
         )
 
     # To learn more about structured task outputs,
@@ -46,7 +47,7 @@ class Others():
     @task
     def decliner(self) -> Task:
         return Task(
-            config=self.tasks['decliner'], # type: ignore[index]
+            config=self.tasks_config['decliner'], # type: ignore[index]
         )
 
     @crew

@@ -16,11 +16,12 @@ class CategoryClass(BaseModel):
     classification: str=Field(..., description="The category of the query")
 
 llm = LLM(
-    model="smollm2:135m",
+    model="ollama/smollm2:135m",
+    base_url="http://localhost:11434",
     temperature=0.3,
     config={
         "max_tokens": 128,
-        "top_k": 10,
+        "top_k": 5,
     }
 )
 
@@ -28,8 +29,8 @@ llm = LLM(
 class Classifier():
     """Classifier Crew"""
 
-    agents="config/agents.yaml"
-    tasks="config/tasks.yaml"
+    agents_config="config/agents.yaml"
+    tasks_config="config/tasks.yaml"
 
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
@@ -40,11 +41,11 @@ class Classifier():
     @agent
     def classifier(self) -> Agent:
         return Agent(
-            config=self.agents["classifier"],
+            config=self.agents_config['classifier'],
             verbose=True,
             allow_delegation=False,
             # max_iter=1,
-            # llm=llm,
+            llm=llm,
         )
 
     # To learn more about structured task outputs,

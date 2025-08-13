@@ -1,7 +1,6 @@
 import requests, warnings, re
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=SyntaxWarning, message=r".*\\&.*")
+warnings.filterwarnings("ignore")
 
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
@@ -13,11 +12,12 @@ from crewai.tools import tool
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 llm = LLM(
-    model="smollm2:135m",
+    model="ollama/smollm2:135m",
+    base_url="http://localhost:11434",
     temperature=0.3,
     config={
         "max_tokens": 128,
-        "top_k": 10,
+        "top_k": 5,
     }
 )
 
@@ -60,8 +60,8 @@ def myWikipediaSearch(question: str) -> str:
 class General():
     """General Crew"""
 
-    agents="config/agents.yaml"
-    tasks="config/tasks.yaml"
+    agents_config="config/agents.yaml"
+    tasks_config="config/tasks.yaml"
     
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
@@ -72,16 +72,18 @@ class General():
     @agent
     def researcher(self) -> Agent:
         return Agent(
-            config=self.agents['researcher'], # type: ignore[index]
+            config=self.agents_config['researcher'], # type: ignore[index]
             verbose=True,
             tools=[myWikipediaSearch],
+            llm=llm,
         )
 
     @agent
     def summarizer(self) -> Agent:
         return Agent(
-            config=self.agents['summarizer'], # type: ignore[index]
-            verbose=True
+            config=self.agents_config['summarizer'], # type: ignore[index]
+            verbose=True,
+            llm=llm,
         )
 
     # To learn more about structured task outputs,
@@ -90,14 +92,14 @@ class General():
     @task
     def research(self) -> Task:
         return Task(
-            config=self.tasks['research'], # type: ignore[index]
+            config=self.tasks_config['research'], # type: ignore[index]
         )
 
     @task
     def summarize(self) -> Task:
         return Task(
-            config=self.tasks['summarize'], # type: ignore[index]
-            context=[research],
+            config=self.tasks_config['summarize'], # type: ignore[index]
+            # context=[research],
             # output_file='report.md'
         )
 

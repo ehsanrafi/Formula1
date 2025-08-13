@@ -11,3 +11,5 @@ summarize:
   expected_output: >
     A brief yet comprehensive summary highlighting the key points, essential facts and presented in an easily understandable format.
   agent: summarizer
+  context:
+    - research

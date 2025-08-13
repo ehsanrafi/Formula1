@@ -1,37 +1,37 @@
 import warnings, re, csv
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=SyntaxWarning, message=r".*\\&.*")
+warnings.filterwarnings("ignore")
 
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
 from crewai_tools import CSVSearchTool
-from langchain.embeddings import HuggingFaceEmbeddings
+# from langchain.embeddings import HuggingFaceEmbeddings
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 llm = LLM(
-    model="smollm2:135m",
+    model="ollama/smollm2:135m",
+    base_url="http://localhost:11434",
     temperature=0.3,
     config={
         "max_tokens": 128,
-        "top_k": 10,
+        "top_k": 5,
     }
 )
 
-# embedchain_config = {
-#     "embedder": {
-#         "provider": "ollama",
-#         "config": {
-#             "model": "nomic-embed-text",
-#         }
-#     }
-# }
+embedchain_config = {
+    "embedder": {
+        "provider": "ollama",
+        "config": {
+            "model": "all-minilm:22m",
+        }
+    }
+}
 
-embedchain_config=HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+# embedchain_config=HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 drivers=CSVSearchTool(csv='knowledge/drivers.csv', config=embedchain_config)
 circuits=CSVSearchTool(csv='knowledge/circuits.csv', config=embedchain_config)
@@ -41,8 +41,8 @@ constructors=CSVSearchTool(csv='knowledge/constructors.csv', config=embedchain_c
 class Concrete():
     """Concrete Crew"""
 
-    agents="config/agents.yaml"
-    tasks="config/tasks.yaml"
+    agents_config="config/agents.yaml"
+    tasks_config="config/tasks.yaml"
 
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
@@ -53,9 +53,10 @@ class Concrete():
     @agent
     def concrete(self) -> Agent:
         return Agent(
-            config=self.agents['concrete'], # type: ignore[index]
+            config=self.agents_config['concrete'], # type: ignore[index]
             verbose=True,
             tools=[drivers, circuits, constructors],
+            llm=llm,
         )
 
     # To learn more about structured task outputs,
@@ -64,7 +65,7 @@ class Concrete():
     @task
     def qa(self) -> Task:
         return Task(
-            config=self.tasks['qa'], # type: ignore[index]
+            config=self.tasks_config['qa'], # type: ignore[index]
         )
 
     @crew
@@ -79,6 +80,6 @@ class Concrete():
             process=Process.sequential,
             verbose=True,
             llm=llm,
-            embedder=embedder_config,
+            # embedder=embedder_config,
             # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
         )

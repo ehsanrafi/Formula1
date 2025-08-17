@@ -1,6 +1,6 @@
 qa:
   description: >
-    Use the information provided in the CSVSearchTool to respond helpfully and accurately to the user's message: {user_message}.
+    Use the information provided in the CSVSearchTool (drivers, constructors, circuits) to respond helpfully and accurately to the user's message: {user_message}.
   expected_output: >
     Craft a response that feels natural and engaging while staying accurate and directly addressing the user's question.
   agent: concrete

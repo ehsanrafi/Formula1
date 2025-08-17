@@ -17,9 +17,8 @@ class MainFlow(Flow[UserInput]):
 
     @start()
     def getUserInput(self):
-        print("What are you looking for?")
         # self.state.input = input("You:")
-        self.state.input="What is Formula 1?"
+        self.state.input="Give me information about Lewis Hamilton"
 
     @listen(getUserInput)
     def startFlow(self):
@@ -37,17 +36,17 @@ class MainFlow(Flow[UserInput]):
 
         if decision=='general':
             try:
-                response=General().crew().kickoff(intputs=inputs)
+                response=General().crew().kickoff(inputs=inputs)
             except Exception as e:
                 raise Exception(f"An error occurred while running the general crew: {e}")
         elif decision=='concrete':
             try:
-                response=Concrete().crew().kickoff(intputs=inputs)
+                response=Concrete().crew().kickoff(inputs=inputs)
             except Exception as e:
                 raise Exception(f"An error occurred while running the concrete crew: {e}")
         elif decision=='others':
             try:
-                response=Others().crew().kickoff(intputs=inputs)
+                response=Others().crew().kickoff(inputs=inputs)
             except Exception as e:
                 raise Exception(f"An error occurred while running the others crew: {e}")
         else:

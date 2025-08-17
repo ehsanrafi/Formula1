@@ -1,8 +1,3 @@
-import warnings, re
-
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=SyntaxWarning, message=r".*\\&.*")
-
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
@@ -16,7 +11,7 @@ class CategoryClass(BaseModel):
     classification: str=Field(..., description="The category of the query")
 
 llm = LLM(
-    model="ollama/smollm2:135m",
+    model="ollama/qwen3:0.6b",
     base_url="http://localhost:11434",
     temperature=0.3,
     config={

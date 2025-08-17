@@ -1,7 +1,4 @@
-import requests, warnings, re
-
-warnings.filterwarnings("ignore")
-
+import requests
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
@@ -12,9 +9,9 @@ from crewai.tools import tool
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 llm = LLM(
-    model="ollama/smollm2:135m",
+    model="ollama/qwen3:0.6b",
     base_url="http://localhost:11434",
-    temperature=0.3,
+    temperature=1,
     config={
         "max_tokens": 128,
         "top_k": 5,
@@ -78,13 +75,13 @@ class General():
             llm=llm,
         )
 
-    @agent
-    def summarizer(self) -> Agent:
-        return Agent(
-            config=self.agents_config['summarizer'], # type: ignore[index]
-            verbose=True,
-            llm=llm,
-        )
+#    @agent
+#    def summarizer(self) -> Agent:
+#        return Agent(
+#            config=self.agents_config['summarizer'], # type: ignore[index]
+#            verbose=True,
+#            llm=llm,
+#        )
 
     # To learn more about structured task outputs,
     # task dependencies, and task callbacks, check out the documentation:
@@ -95,13 +92,13 @@ class General():
             config=self.tasks_config['research'], # type: ignore[index]
         )
 
-    @task
-    def summarize(self) -> Task:
-        return Task(
-            config=self.tasks_config['summarize'], # type: ignore[index]
+#   @task
+#    def summarize(self) -> Task:
+#        return Task(
+#            config=self.tasks_config['summarize'], # type: ignore[index]
             # context=[research],
             # output_file='report.md'
-        )
+#       )
 
     @crew
     def crew(self) -> Crew:

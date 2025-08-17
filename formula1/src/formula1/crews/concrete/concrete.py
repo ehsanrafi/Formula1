@@ -1,7 +1,4 @@
-import warnings, re, csv
-
-warnings.filterwarnings("ignore")
-
+import csv
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
@@ -13,9 +10,9 @@ from crewai_tools import CSVSearchTool
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 llm = LLM(
-    model="ollama/smollm2:135m",
-    base_url="http://localhost:11434",
-    temperature=0.3,
+    model="ollama/qwen3:0.6b",
+    base_url=f"http://localhost:11434",
+    temperature=1,
     config={
         "max_tokens": 128,
         "top_k": 5,
@@ -33,9 +30,9 @@ embedchain_config = {
 
 # embedchain_config=HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
-drivers=CSVSearchTool(csv='knowledge/drivers.csv', config=embedchain_config)
-circuits=CSVSearchTool(csv='knowledge/circuits.csv', config=embedchain_config)
-constructors=CSVSearchTool(csv='knowledge/constructors.csv', config=embedchain_config)
+drivers=CSVSearchTool(csv='/home/extensa/Projects/Formula1/Formula1/formula1/knowledge/drivers.csv', config=embedchain_config)
+circuits=CSVSearchTool(csv='/home/extensa/Projects/Formula1/Formula1/formula1/knowledge/circuits.csv', config=embedchain_config)
+constructors=CSVSearchTool(csv='/home/extensa/Projects/Formula1/Formula1/formula1/knowledge/constructors.csv', config=embedchain_config)
 
 @CrewBase
 class Concrete():

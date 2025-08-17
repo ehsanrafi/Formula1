@@ -5,11 +5,11 @@ research:
     Provide validated, accurate, and up-to-date information findings, presented clearly and logically.
   agent: researcher
 
-summarize:
-  description: >
-    Review and distill the collected information about the previous data into a clear, concise, and well-structured summary.
-  expected_output: >
-    A brief yet comprehensive summary highlighting the key points, essential facts and presented in an easily understandable format.
-  agent: summarizer
-  context:
-    - research
+#summarize:
+#  description: >
+#    Review and distill the collected information about the previous data into a clear, concise, and well-structured summary.
+#  expected_output: >
+#    A brief yet comprehensive summary highlighting the key points, essential facts and presented in an easily understandable format.
+#  agent: summarizer
+#  context:
+#    - research

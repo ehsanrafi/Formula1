@@ -1,7 +1,3 @@
-import warnings, re
-
-warnings.filterwarnings("ignore")
-
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
@@ -11,9 +7,9 @@ from typing import List
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 llm = LLM(
-    model="ollama/smollm2:135m",
+    model="ollama/smollm2:360m",
     base_url="http://localhost:11434",
-    temperature=0.3,
+    temperature=0.7,
     config={
         "max_tokens": 128,
         "top_k": 5,
